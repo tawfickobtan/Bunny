@@ -1,4 +1,4 @@
-import client from './llm.js';
+import client from './types/llm.js';
 import type {tool} from './types/tools.js';
 import type session from './types/session.js';
 

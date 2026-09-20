@@ -1,5 +1,5 @@
 import agent from './agent/agent.js';
-import client from './agent/llm.js';
+import client from './agent/types/llm.js';
 import type { tool, tool_call} from './agent/types/tools.js';
 import session from './agent/types/session.js';
 import type { message } from './agent/types/message.js';

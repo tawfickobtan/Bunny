@@ -1,4 +1,4 @@
-type toolSchema = {
+export type toolSchema = {
     name: string;
     description: string;
     parameters: Record<string, any>;
