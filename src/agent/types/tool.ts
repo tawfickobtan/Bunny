@@ -4,6 +4,7 @@ export type toolSchema = {
     parameters?:  {
         type: 'object';
         properties: Record<string,any>;
+        required?: string[];
     };
 }
 

@@ -23,7 +23,8 @@ export const listFilesSchema: tool = {
                     type: 'string',
                     description: 'Path to list existing files in.'
                 }
-            }
+            },
+            required: ["directoryPath"]
         }
     }
 }
