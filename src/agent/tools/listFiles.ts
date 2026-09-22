@@ -1,6 +1,5 @@
 import * as fs from 'node:fs/promises';
 import type {tool} from '../types/tool.js';
-import { MockPropertyContext } from 'node:test';
 
 export async function listFiles(directoryPath: string): Promise<string>{
     try {
