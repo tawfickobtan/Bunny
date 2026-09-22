@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises';
 import type {tool} from '../types/tool.js';
 
-export async function readFileTool(params: Record<string, any>):Promise<string>{
+export async function readFile(params: Record<string, any>):Promise<string>{
     try {
         const filePath = params.filePath;
         const data = await fs.readFile(filePath, { encoding: 'utf8' });
@@ -15,7 +15,7 @@ export async function readFileTool(params: Record<string, any>):Promise<string>{
 export const readFileSchema: tool = {
     type: "function",
     function: {
-        name: "readFileTool",
+        name: "readFile",
         description: "Reads content of files.",
         parameters:{
             type: "object",
