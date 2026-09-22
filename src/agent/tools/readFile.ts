@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
-import type {tool} from '../types/tools.js';
+import type {tool} from '../types/tool.js';
 
-export async function readFileTool(filePath: string):Promise<string>{
+export async function readFileTool(params: Record<string, any>):Promise<string>{
     try {
-        // Specify 'utf8' encoding to get the content as a string instead of a Buffer
+        const filePath = params.filePath;
         const data = await fs.readFile(filePath, { encoding: 'utf8' });
         return data;
       } catch (error) {
@@ -16,13 +16,13 @@ export const readFileSchema: tool = {
     type: "function",
     function: {
         name: "readFileTool",
-        description: "Reads content of files",
+        description: "Reads content of files.",
         parameters:{
             type: "object",
             properties: {
-                filepath : {
+                filePath : {
                     type: "string",
-                    description: "Path of file to read"
+                    description: "Path of file to read."
                 }
             }
         }
