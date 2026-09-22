@@ -4,6 +4,8 @@ import type session from './types/session.js';
 import type {message} from './types/message.js';
 import {readFileSchema, readFile} from './tools/readFile.js';
 import { listFiles, listFilesSchema } from './tools/listFiles.js';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 class agent {
     llm: client;
