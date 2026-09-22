@@ -1,7 +1,10 @@
 export type toolSchema = {
     name: string;
     description: string;
-    parameters: Record<string, any>;
+    parameters?:  {
+        type: 'object';
+        properties: Record<string,any>;
+    };
 }
 
 export type tool = {
@@ -10,9 +13,11 @@ export type tool = {
 }
 
 export type tool_call = {
+    id: string;
     type: 'function';
     function: {
         name: string;
-        arguments: Record<string, any>;
+        arguments: string;
+        
     }
 }

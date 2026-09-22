@@ -1,7 +1,7 @@
 import type {chatCompletion} from './chatCompletion.js';
 import type {message} from './message.js';
 import type {choice} from './choice.js';
-import type {tool} from './tools.js';
+import type {tool} from './tool.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
