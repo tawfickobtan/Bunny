@@ -3,17 +3,19 @@ import type {tool, tool_call} from './types/tool.js';
 import type session from './types/session.js';
 import type {message} from './types/message.js';
 import {readFileSchema, readFile} from './tools/readFile.js';
-import { listFiles, listFilesSchema } from './tools/listFiles.js';
+import {listFiles, listFilesSchema} from './tools/listFiles.js';
+import {webSearch, webSearchSchema} from './tools/webSearch.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 class agent {
     llm: client;
     session: session;
-    tools: tool[] = [readFileSchema, listFilesSchema];
+    tools: tool[] = [readFileSchema, listFilesSchema, webSearchSchema];
     registry: Record<string, any> = {
         "readFile": readFile,
-        "listFiles": listFiles
+        "listFiles": listFiles,
+        "webSearch": webSearch
     }
 
     constructor(client: client, session: session){
