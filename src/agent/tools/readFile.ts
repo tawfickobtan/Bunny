@@ -1,9 +1,8 @@
 import * as fs from 'node:fs/promises';
 import type {tool} from '../types/tool.js';
 
-export async function readFile(params: Record<string, any>):Promise<string>{
+export async function readFile({filePath}: {filePath: string}):Promise<string>{
     try {
-        const filePath = params.filePath;
         const data = await fs.readFile(filePath, { encoding: 'utf8' });
         return data;
       } catch (error) {
