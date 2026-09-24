@@ -44,7 +44,7 @@ class agent {
         }
     }
 
-    async run(){
+    async run(onToolCall: (event: {name: string, argument: string}) => void){
         while (true){
             console.log("Agent Turned.\n");
             const output: message | undefined = await this.turn();
@@ -54,10 +54,10 @@ class agent {
             }
 
             for (const toolCall of tools){
+                onToolCall({name: toolCall.function.name, argument: toolCall.function.arguments});
                 const toolResponse = await this.executeToolCall(toolCall);
                 if (toolResponse === undefined) continue;
                 this.session.messages.push({role: "tool", tool_call_id: toolCall.id, content: toolResponse});
-                console.log(toolResponse);
             }
         }
     }

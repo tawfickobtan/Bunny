@@ -1,7 +1,6 @@
 import agent from './agent/agent.js';
 import client from './agent/types/llm.js';
 import session from './agent/types/session.js';
-import type { message } from './agent/types/message.js';
 import express from 'express';
 
 const app = express();
@@ -26,13 +25,18 @@ app.post('/response', async (req, res) => {
     const test: agent = new agent(llm, session1);
 
 
-    test.addUserMessage(msg);
-    const out: message = await test.run() as message;
+    res.setHeader("Content-Type", "text/event-stream");
 
-    res.json({response: out})
+    test.addUserMessage(msg);
+    const out = await test.run((toolcall) => {
+      res.write(`data: ${JSON.stringify(toolcall)}\n\n`);
+    });
+    res.write("\n\n")
+    res.write(JSON.stringify(out));
+    res.end();
 });
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-
+// curl -N -X POST http://localhost:3000/response -H "Content-Type: application/json" -d "{\"msg\":\"What are the latest updates with Nvidia?\"}"
