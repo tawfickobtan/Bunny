@@ -27,7 +27,8 @@ export const writeFileSchema: tool = {
                 type: "string",
                 description: "Content to be written into file."
               }
-          }
+          },
+          required: ["filePath", "content"]
       }
   }
 }
