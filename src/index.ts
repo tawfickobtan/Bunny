@@ -10,7 +10,7 @@ const session1:session = new session("1", "Hello", "./", "You're a helpful assis
 const test: agent = new agent(llm, session1);
 
 
-test.addUserMessage("Given the tools you have, try to understand what this directory contains: D:/brogrammer/Bunny/");
+test.addUserMessage("Give me some of the latest updates on Nvidia");
 const res: message = await test.run() as message;
 
 console.log(res);
