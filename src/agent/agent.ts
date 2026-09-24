@@ -2,7 +2,7 @@ import client from './types/llm.js';
 import type {tool, tool_call} from './types/tool.js';
 import type session from './types/session.js';
 import type {message} from './types/message.js';
-import {readFileSchema, readFile} from './tools/readFile.js';
+import {readFileLinesSchema, readFileLines} from './tools/readFileLines.js';
 import {listFiles, listFilesSchema} from './tools/listFiles.js';
 import {webSearch, webSearchSchema} from './tools/webSearch.js';
 import {fetchContent, fetchContentSchema} from './tools/fetchContent.js';
@@ -13,9 +13,9 @@ dotenv.config();
 class agent {
     llm: client;
     session: session;
-    tools: tool[] = [readFileSchema, listFilesSchema, webSearchSchema, fetchContentSchema, writeFileSchema];
+    tools: tool[] = [readFileLinesSchema, listFilesSchema, webSearchSchema, fetchContentSchema, writeFileSchema];
     registry: Record<string, any> = {
-        "readFile": readFile,
+        "readFileLines": readFileLines,
         "listFiles": listFiles,
         "webSearch": webSearch,
         "fetchContent": fetchContent,
