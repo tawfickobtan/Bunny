@@ -23,7 +23,8 @@ export const readFileSchema: tool = {
                     type: "string",
                     description: "Path of file to read."
                 }
-            }
+            },
+            required: ["filePath"]
         }
     }
 }
