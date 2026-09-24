@@ -5,17 +5,19 @@ import type {message} from './types/message.js';
 import {readFileSchema, readFile} from './tools/readFile.js';
 import {listFiles, listFilesSchema} from './tools/listFiles.js';
 import {webSearch, webSearchSchema} from './tools/webSearch.js';
+import {fetchContent, fetchContentSchema} from './tools/fetchContent.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 class agent {
     llm: client;
     session: session;
-    tools: tool[] = [readFileSchema, listFilesSchema, webSearchSchema];
+    tools: tool[] = [readFileSchema, listFilesSchema, webSearchSchema, fetchContentSchema];
     registry: Record<string, any> = {
         "readFile": readFile,
         "listFiles": listFiles,
-        "webSearch": webSearch
+        "webSearch": webSearch,
+        "fetchContent": fetchContent
     }
 
     constructor(client: client, session: session){
@@ -42,8 +44,7 @@ class agent {
 
     async run(){
         while (true){
-            console.log("turned");
-            console.log("---------");
+            console.log("Agent Turned.\n");
             const output: message | undefined = await this.turn();
             const tools: tool_call[] | undefined = output?.tool_calls;
             if (tools === undefined){
