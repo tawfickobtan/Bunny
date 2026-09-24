@@ -4,7 +4,8 @@ import type {tool} from '../types/tool.js';
 export async function listFiles({directoryPath} : {directoryPath: string}): Promise<string>{
     try {
         const files = await fs.readdir(directoryPath);
-        return files.join('\n');
+        const res = {files: files};
+        return JSON.stringify(res, null, 2);
     }
     catch(e){
         return 'Error reading directory: ' + e;
