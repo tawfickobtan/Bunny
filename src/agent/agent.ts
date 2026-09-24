@@ -6,18 +6,20 @@ import {readFileSchema, readFile} from './tools/readFile.js';
 import {listFiles, listFilesSchema} from './tools/listFiles.js';
 import {webSearch, webSearchSchema} from './tools/webSearch.js';
 import {fetchContent, fetchContentSchema} from './tools/fetchContent.js';
+import {writeFile, writeFileSchema} from './tools/writeFile.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 class agent {
     llm: client;
     session: session;
-    tools: tool[] = [readFileSchema, listFilesSchema, webSearchSchema, fetchContentSchema];
+    tools: tool[] = [readFileSchema, listFilesSchema, webSearchSchema, fetchContentSchema, writeFileSchema];
     registry: Record<string, any> = {
         "readFile": readFile,
         "listFiles": listFiles,
         "webSearch": webSearch,
-        "fetchContent": fetchContent
+        "fetchContent": fetchContent,
+        "writeFile": writeFile
     }
 
     constructor(client: client, session: session){
