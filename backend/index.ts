@@ -2,6 +2,22 @@ import agent from './agent/agent.js';
 import client from './agent/types/llm.js';
 import session from './agent/types/session.js';
 import express from 'express';
+import * as fs from 'node:fs/promises';
+import { existsSync } from 'fs';
+import path from 'path';
+
+const bunnyPath = path.resolve(process.env.USERPROFILE as string, ".bunny");
+await fs.mkdir(bunnyPath, {recursive: true});
+const sessionsPath = path.resolve(process.env.USERPROFILE as string, ".bunny/sessions.json");
+if (existsSync(sessionsPath)){
+  console.log("Sessions file exists!");
+}
+else{
+  console.log("Sessions file doesn't exist!");
+  fs.writeFile(sessionsPath,'[]','utf8');
+  console.log("Sessions file created!")
+}
+
 
 const app = express();
 app.use(express.json());

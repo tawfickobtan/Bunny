@@ -1,6 +1,6 @@
 # Bunny 🐇 (App Server)
 
-Coding agent I'm working on, just wait! 😊
+Self-Improving Coding agent I'm working on, just wait! 😊
 
 ## Next-Up To-Do:
 - Session persistence.
