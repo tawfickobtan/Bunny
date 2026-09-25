@@ -1,14 +1,28 @@
 import * as fs from 'node:fs/promises';
 import type {tool} from '../types/tool.js';
+import path from 'path';
 
-export async function listFiles({directoryPath} : {directoryPath: string}): Promise<string>{
+export async function listFiles(cwd: string, {directoryPath} : {directoryPath: string}): Promise<string>{
     try {
-        const files = await fs.readdir(directoryPath);
-        const res = {files: files};
+        const resPath = path.resolve(directoryPath);
+        const resPathArr = resPath.split(path.sep);
+        const resCwd = path.resolve(cwd);
+        const resCwdArr = resCwd.split(path.sep);
+        if (resPathArr.length < resCwdArr.length)
+            return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
+        
+        var i = 0;
+        while (i < resCwdArr.length){
+            if (resCwdArr[i] !== resPathArr[i])
+                return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
+            i++;
+}
+        const files = await fs.readdir(resPath);
+        const res = {success: true, files: files};
         return JSON.stringify(res, null, 2);
     }
     catch(e){
-        return 'Error reading directory: ' + e;
+        return JSON.stringify({success: false, message: 'Error reading directory: ' + e});
     }
 }
 

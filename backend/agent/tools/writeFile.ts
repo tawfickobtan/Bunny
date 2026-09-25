@@ -1,12 +1,26 @@
 import type { tool } from "../types/tool.js";
 import * as fs from "node:fs/promises";
+import path from 'path';
 
-export async function writeFile({filePath, content}: {filePath: string, content: string}): Promise<string>{
+export async function writeFile(cwd: string, {filePath, content}: {filePath: string, content: string}): Promise<string>{
     try {
+        const resPath = path.resolve(filePath);
+        const resPathArr = resPath.split(path.sep);
+        const resCwd = path.resolve(cwd);
+        const resCwdArr = resCwd.split(path.sep);
+        if (resPathArr.length < resCwdArr.length)
+            return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
+        
+        var i = 0;
+        while (i < resCwdArr.length){
+            if (resCwdArr[i] !== resPathArr[i])
+                return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
+            i++;
+}
         await fs.writeFile(filePath, content, 'utf8');
-        return 'File written successfully!';
+        return JSON.stringify({success: true});
       } catch (e) {
-        return 'Error writing file: ' + e;
+        return JSON.stringify({success: false, message: 'Error writing file: ' + e});
       }
     
 }

@@ -3,7 +3,7 @@ import type {tool} from '../types/tool.js';
 
 const client = tavily({ apiKey: process.env.TAVILY_API_KEY as string});
 
-export async function webSearch({query, k}: {query: string; k?: number}): Promise<string>{
+export async function webSearch(cwd: string, {query, k}: {query: string; k?: number}): Promise<string>{
     if (k === undefined) k = 5;
     const response = await client.search(query, {
         searchDepth: "fast",

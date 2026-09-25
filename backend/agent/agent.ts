@@ -1,6 +1,6 @@
 import client from './types/llm.js';
 import type {tool, tool_call} from './types/tool.js';
-import type session from './types/session.js';
+import session from './types/session.js';
 import type {message} from './types/message.js';
 import {readFileLinesSchema, readFileLines} from './tools/readFileLines.js';
 import {listFiles, listFilesSchema} from './tools/listFiles.js';
@@ -40,7 +40,7 @@ class agent {
     async executeToolCall(toolCall: tool_call | undefined): Promise<string | undefined>{
         if (toolCall === undefined) return undefined;
         if (toolCall.function.name in this.registry){
-            return this.registry[toolCall.function.name](JSON.parse(toolCall.function.arguments));
+            return this.registry[toolCall.function.name](this.session.cwd, JSON.parse(toolCall.function.arguments));
         }
     }
 

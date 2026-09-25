@@ -2,7 +2,7 @@ import type { tool } from "../types/tool.js";
 import { tavily } from "@tavily/core";
 
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY as string});
-export async function fetchContent({url}: {url:string}): Promise<string>{
+export async function fetchContent(cwd: string, {url}: {url:string}): Promise<string>{
     try{
     const response = await tvly.extract([url]);
     return JSON.stringify(response, null, 2);

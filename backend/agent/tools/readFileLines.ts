@@ -1,10 +1,24 @@
 import * as fs from 'node:fs/promises';
 import type {tool} from '../types/tool.js';
+import path from 'path';
 
-export async function readFileLines({filePath, startLine, endLine}: {filePath: string, startLine?: number, endLine?: number}):Promise<string>{
+export async function readFileLines(cwd: string, {filePath, startLine, endLine}: {filePath: string, startLine?: number, endLine?: number}):Promise<string>{
     try {
+        const resPath = path.resolve(filePath);
+        const resPathArr = resPath.split(path.sep);
+        const resCwd = path.resolve(cwd);
+        const resCwdArr = resCwd.split(path.sep);
+        if (resPathArr.length < resCwdArr.length)
+            return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
+        
+        var i = 0;
+        while (i < resCwdArr.length){
+            if (resCwdArr[i] !== resPathArr[i])
+                return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
+            i++;
+}
         if (startLine === undefined) startLine = 1;
-        let data = await fs.readFile(filePath, { encoding: 'utf8' });
+        let data = await fs.readFile(resPath, { encoding: 'utf8' });
         data = data.replaceAll("\r\n", "\n");
         const arr = data.split("\n");
         if (endLine === undefined) endLine = arr.length;
@@ -13,6 +27,7 @@ export async function readFileLines({filePath, startLine, endLine}: {filePath: s
         const newArr = arr.slice(startLine - 1, endLine);
         const out = newArr.join("\n");
         const res = {
+            success: true,
             totalLines: arr.length,
             startLine: startLine,
             endLine: endLine,
@@ -20,7 +35,7 @@ export async function readFileLines({filePath, startLine, endLine}: {filePath: s
         }
         return JSON.stringify(res, null, 2);
       } catch (error) {
-        return 'Error reading file:' + error;
+        return JSON.stringify({success: false, message: 'Error reading file:' + error});
       }
 
 }
@@ -50,5 +65,3 @@ export const readFileLinesSchema: tool = {
         }
     }
 }
-
-console.log(await readFileLines({filePath:"D:/brogrammer/Bunny/src/agent/tools/readFile.ts"}));
