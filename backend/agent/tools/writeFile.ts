@@ -48,3 +48,4 @@ export const writeFileSchema: toolSchema = {
 }
 
 const writeFile = new tool<{filePath: string, content: string}>(writeFileSchema, writeFileTool);
+export default writeFile;
