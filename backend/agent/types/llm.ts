@@ -1,7 +1,8 @@
-import type {chatCompletion} from './chatCompletion.js';
-import type {message} from './message.js';
-import type {choice} from './choice.js';
-import type {tool} from './tool.js';
+import type {message, assistantMessage} from './message.js';
+import type { toolSchema } from './tool.js';
+import type {chatCompletion} from './response.js';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 class client {
   model: string;
@@ -12,7 +13,7 @@ class client {
     this.provider = provider;
   }
 
-  async complete (messages: message[], tools: tool[]): Promise<message | undefined>{
+  async complete (messages: message[], tools?: toolSchema[]): Promise<assistantMessage>{
     let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -32,12 +33,10 @@ class client {
       }
       })
     });
-    
-  // Extract the assistant message with reasoning_details and save it to the response variable
-  const result = await response.json() as chatCompletion;
-  const choices: choice[] = result.choices;
-  const msg: message | undefined = choices[0]?.message;
-  return msg;
+    let completion = await response.json() as chatCompletion;
+    let message = completion.choices[0]?.message;
+    if (message === undefined) throw new Error("No message");
+    return message;
   }
 }
 

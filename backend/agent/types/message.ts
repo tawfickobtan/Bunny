@@ -1,10 +1,28 @@
-import type { tool_call } from "./tool.js";
+import type {tool_call } from "./tool.js";
 
-export type message = {
-    role: 'system'|'user'|'assistant'|'tool';
+export type message = userMessage | systemMessage | assistantMessage | toolMessage;
+
+export type userMessage = {
+    role: 'user';
+    content: string;
+}
+
+export type systemMessage = {
+    role: 'system';
+    content: string;
+}
+export type assistantMessage = {
+    role: 'assistant';
     content: string;
     reasoning?: string;
     tool_calls?: tool_call[];
-    tool_call_id?: string;
 }
+
+export type toolMessage = {
+    role: 'tool';
+    content: string;
+    tool_call_id: string;
+}
+
+
 
