@@ -1,8 +1,8 @@
-import type { tool } from "../types/tool.js";
+import tool, {type toolSchema} from "../types/tool.js";
 import * as fs from "node:fs/promises";
 import path from 'path';
 
-export async function writeFile(cwd: string, {filePath, content}: {filePath: string, content: string}): Promise<string>{
+export async function writeFileTool(cwd: string, {filePath, content}: {filePath: string, content: string}): Promise<string>{
     try {
         const resPath = path.resolve(filePath);
         const resPathArr = resPath.split(path.sep);
@@ -25,7 +25,7 @@ export async function writeFile(cwd: string, {filePath, content}: {filePath: str
     
 }
 
-export const writeFileSchema: tool = {
+export const writeFileSchema: toolSchema = {
   type: "function",
   function: {
       name: "writeFile",
@@ -46,3 +46,5 @@ export const writeFileSchema: tool = {
       }
   }
 }
+
+const writeFile = new tool<{filePath: string, content: string}>(writeFileSchema, writeFileTool);

@@ -1,9 +1,9 @@
 import {tavily} from "@tavily/core";
-import type {tool} from '../types/tool.js';
+import tool, {type toolSchema} from '../types/tool.js';
 
 const client = tavily({ apiKey: process.env.TAVILY_API_KEY as string});
 
-export async function webSearch(cwd: string, {query, k}: {query: string; k?: number}): Promise<string>{
+export async function webSearchTool(cwd: string, {query, k}: {query: string; k?: number}): Promise<string>{
     if (k === undefined) k = 5;
     const response = await client.search(query, {
         searchDepth: "fast",
@@ -13,7 +13,7 @@ export async function webSearch(cwd: string, {query, k}: {query: string; k?: num
     return JSON.stringify(response, null, 2);
 }
 
-export const webSearchSchema: tool = {
+export const webSearchSchema: toolSchema= {
     type: "function",
     function: {
         name: "webSearch",
@@ -35,3 +35,5 @@ export const webSearchSchema: tool = {
     }
 }
 
+const webSearch = new tool<{query: string; k?: number}>(webSearchSchema, webSearchTool);
+export default webSearch;

@@ -1,8 +1,8 @@
-import type { tool } from "../types/tool.js";
-import { tavily } from "@tavily/core";
+import tool, { type toolSchema } from "../types/tool.js";
+import {tavily} from "@tavily/core";
 
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY as string});
-export async function fetchContent(cwd: string, {url}: {url:string}): Promise<string>{
+async function fetchContentTool(cwd: string, {url}: {url:string}): Promise<string>{
     try{
     const response = await tvly.extract([url]);
     return JSON.stringify(response, null, 2);
@@ -12,7 +12,7 @@ export async function fetchContent(cwd: string, {url}: {url:string}): Promise<st
     }
 }
 
-export const fetchContentSchema: tool = {
+const fetchContentSchema : toolSchema = {
     type: "function",
     function: {
         name: "fetchContent",
@@ -29,3 +29,6 @@ export const fetchContentSchema: tool = {
         }
     }
 }
+
+const fetchContent = new tool<{url: string}>(fetchContentSchema, fetchContentTool);
+export default fetchContent;

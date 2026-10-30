@@ -1,8 +1,8 @@
 import * as fs from 'node:fs/promises';
-import type {tool} from '../types/tool.js';
+import tool, {type toolSchema} from '../types/tool.js';
 import path from 'path';
 
-export async function readFileLines(cwd: string, {filePath, startLine, endLine}: {filePath: string, startLine?: number, endLine?: number}):Promise<string>{
+export async function readFileLinesTool(cwd: string, {filePath, startLine, endLine}: {filePath: string, startLine?: number, endLine?: number}):Promise<string>{
     try {
         const resPath = path.resolve(filePath);
         const resPathArr = resPath.split(path.sep);
@@ -40,10 +40,10 @@ export async function readFileLines(cwd: string, {filePath, startLine, endLine}:
 
 }
 
-export const readFileLinesSchema: tool = {
+export const readFileLinesSchema: toolSchema = {
     type: "function",
     function: {
-        name: "readFile",   
+        name: "readFileLines",   
         description: "Reads lines of a file. Returns object which has total number of lines in file, starting line of content, ending line of content (both are 1-indexed), and content itself. If starting and ending lines are left out, by default will return content of whole file.",
         parameters:{
             type: "object",
@@ -65,3 +65,6 @@ export const readFileLinesSchema: tool = {
         }
     }
 }
+
+const readFileLines = new tool<{filePath: string, startLine?: number, endLine?: number}>(readFileLinesSchema, readFileLinesTool);
+export default readFileLines;

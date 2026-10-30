@@ -1,8 +1,8 @@
 import * as fs from 'node:fs/promises';
-import type {tool} from '../types/tool.js';
+import tool, {type toolSchema} from '../types/tool.js';
 import path from 'path';
 
-export async function listFiles(cwd: string, {directoryPath} : {directoryPath: string}): Promise<string>{
+async function listFilesTool(cwd: string, {directoryPath} : {directoryPath: string}): Promise<string>{
     try {
         const resPath = path.resolve(directoryPath);
         const resPathArr = resPath.split(path.sep);
@@ -26,7 +26,7 @@ export async function listFiles(cwd: string, {directoryPath} : {directoryPath: s
     }
 }
 
-export const listFilesSchema: tool = {
+const listFilesSchema: toolSchema = {
     type: 'function',
     function: {
         name: 'listFiles',
@@ -43,3 +43,6 @@ export const listFilesSchema: tool = {
         }
     }
 }
+
+const listFiles = new tool<{directoryPath: string}>(listFilesSchema, listFilesTool);
+export default listFiles;
