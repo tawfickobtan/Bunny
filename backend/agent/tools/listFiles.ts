@@ -1,22 +1,12 @@
 import * as fs from 'node:fs/promises';
 import tool, {type toolSchema} from '../types/tool.js';
+import { isInsideCwd } from './common.js';
 import path from 'path';
 
 async function listFilesTool(cwd: string, {directoryPath} : {directoryPath: string}): Promise<string>{
     try {
         const resPath = path.resolve(directoryPath);
-        const resPathArr = resPath.split(path.sep);
-        const resCwd = path.resolve(cwd);
-        const resCwdArr = resCwd.split(path.sep);
-        if (resPathArr.length < resCwdArr.length)
-            return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
-        
-        var i = 0;
-        while (i < resCwdArr.length){
-            if (resCwdArr[i] !== resPathArr[i])
-                return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
-            i++;
-}
+        if (!isInsideCwd(cwd, resPath)) return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + cwd});
         const files = await fs.readdir(resPath);
         const res = {success: true, files: files};
         return JSON.stringify(res, null, 2);

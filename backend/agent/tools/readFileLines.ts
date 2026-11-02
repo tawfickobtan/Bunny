@@ -1,22 +1,12 @@
 import * as fs from 'node:fs/promises';
 import tool, {type toolSchema} from '../types/tool.js';
+import { isInsideCwd } from './common.js';
 import path from 'path';
 
 export async function readFileLinesTool(cwd: string, {filePath, startLine, endLine}: {filePath: string, startLine?: number, endLine?: number}):Promise<string>{
     try {
         const resPath = path.resolve(filePath);
-        const resPathArr = resPath.split(path.sep);
-        const resCwd = path.resolve(cwd);
-        const resCwdArr = resCwd.split(path.sep);
-        if (resPathArr.length < resCwdArr.length)
-            return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
-        
-        var i = 0;
-        while (i < resCwdArr.length){
-            if (resCwdArr[i] !== resPathArr[i])
-                return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + resCwd});
-            i++;
-}
+        if (!isInsideCwd(cwd, resPath)) return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + cwd});
         if (startLine === undefined) startLine = 1;
         let data = await fs.readFile(resPath, { encoding: 'utf8' });
         data = data.replaceAll("\r\n", "\n");
