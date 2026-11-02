@@ -7,8 +7,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "bam": "npx tsx backend/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "bam": "npx tsx backend/test.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
