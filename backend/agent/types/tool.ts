@@ -20,3 +20,13 @@ export type tool_call = {
         
     }
 }
+
+export default class tool<T>{
+    schema: toolSchema;
+    fn: (cwd: string, params: T) => Promise<string>;
+
+    constructor(schema: toolSchema, fn: (cwd: string, params: T) => Promise<string>){
+        this.schema = schema;
+        this.fn = fn;
+    }
+}
