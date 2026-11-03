@@ -1,12 +1,31 @@
-import { webSearchSchema } from "./agent/tools/webSearch.js";
+import type {thread} from "./agent/types/thread.js";
 import client from "./agent/types/llm.js";
-import type { assistantMessage, message } from "./agent/types/message.js";
+import agent from "./agent/agent.js";
+import { localStore } from "./localStorage.js";
+import {type event} from "./event.js";
 
-const temp = new client("particle-ai/particle-1", "particle-ai")
+const tempStorage = new localStore();
+await tempStorage.load();
+const tempThread = await tempStorage.create("You are a helpful assistant, to help me with searching the web. Only ever use English.", "Check where does the Nvidia stock currently stand by using web search, tell me if you aren't able to.");
 
-const messages: message[] = [{"role": "system", "content": "Find me where EGX30 currently stands"}];
+const tempClient = new client("deepseek/deepseek-v4.1-flash-1017", "relace/fp4");
+const tempAgent = new agent(tempClient, tempThread);
 
-
-const msg = await(temp.complete(messages, [webSearchSchema]))
-
-console.log(msg);
+await tempAgent.run((e: event) => {
+    switch(e.type){
+        case "tool_result":
+            console.log("Tool Response:\n" + e.tool_result.content);
+            break;
+        case "done":
+            console.log("Done!");
+            break;
+        case "error":
+            console.log("Error occured:\n" + e.error);
+            break;
+        case "message":
+            console.log("Agent Responded:\n");
+            console.log(e.message);
+    }
+    console.log("----------");
+});
+await tempStorage.save();

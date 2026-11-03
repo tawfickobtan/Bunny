@@ -1,6 +1,6 @@
 import client from './types/llm.js';
 import tool, {type tool_call, type toolSchema} from './types/tool.js';
-import session from './types/session.js';
+import thread from './types/thread.js';
 import type {assistantMessage, message, toolMessage} from './types/message.js';
 import readFileLines from './tools/readFileLines.js';
 import listFiles from './tools/listFiles.js';
@@ -11,16 +11,16 @@ import * as dotenv from 'dotenv';
 import type { event } from '../event.js';
 dotenv.config();
 
-class agent {
+export class agent {
     llm: client;
-    session: session;
+    thread: thread;
     tools: tool<any>[] = [readFileLines, listFiles, webSearch, fetchContent, writeFile];
     toolSchemas: toolSchema[] = [];
     registry: Record<string, any>;
 
-    constructor(client: client, session: session){
+    constructor(client: client, thread: thread){
         this.llm = client;
-        this.session = session;
+        this.thread = thread;
         this.registry = {};
         let i = 0;
         while (i < this.tools.length){
@@ -31,19 +31,19 @@ class agent {
     }
 
     addUserMessage(message: string): void{
-        this.session.messages.push({role: 'user', content: message});
+        this.thread.messages.push({role: 'user', content: message});
     }
 
     async turn(){
-        const msg: message = await this.llm.complete(this.session.messages,  this.toolSchemas);
-        this.session.messages.push(msg);
+        const msg: message = await this.llm.complete(this.thread.messages,  this.toolSchemas);
+        this.thread.messages.push(msg);
         return msg;
     }
 
     async executeToolCall(toolCall: tool_call): Promise<string>{
         try{
         if (toolCall.function.name in this.registry){
-            return await this.registry[toolCall.function.name](this.session.cwd, JSON.parse(toolCall.function.arguments));
+            return await this.registry[toolCall.function.name](this.thread.cwd, JSON.parse(toolCall.function.arguments));
         }
         else {
             return "Tool not found. Make sure tool name is correct.";
@@ -70,7 +70,7 @@ class agent {
                 const toolResponse = await this.executeToolCall(toolCall);
                 const toolResult: toolMessage = {role: "tool", tool_call_id: toolCall.id, content: toolResponse};
                 onEvent({type: "tool_result", tool_result: toolResult});
-                this.session.messages.push(toolResult);
+                this.thread.messages.push(toolResult);
             }
         }
     }

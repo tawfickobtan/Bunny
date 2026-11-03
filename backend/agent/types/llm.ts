@@ -4,7 +4,7 @@ import type {chatCompletion} from './response.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-class client {
+export class client {
   model: string;
   provider: string;
 
