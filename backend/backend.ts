@@ -1,0 +1,59 @@
+import express from "express";
+import { localStore } from "./localStorage.js";
+import agent from "./harness/harness.js";
+import client from "./harness/types/llm.js";
+import { encodeEvent, type event } from "./event.js";
+
+const store = new localStore();
+await store.load();
+
+const app = express();
+app.use(express.json());
+app.use((req, res, next) => {
+    console.log(req.method, req.url);
+    next();
+})
+
+app.get("/health", (req, res) =>{
+    res.json({ok: true})
+})
+
+app.get("/threads", (req, res) => {
+    res.json(store.getThreads());
+})
+
+app.get("/threads/:id", (req, res) => {
+    res.json(store.getThreads()[req.params.id] ?? {ok: false})
+});
+
+app.post("/threads", async (req, res) => {
+    if (req.body.cwd === undefined) res.json({ok: false})
+    const t = await store.create(req.body.cwd, "You're a helpful assistant with web search!")
+    res.json(t);
+})
+
+app.post("/threads/:id/messages", async (req, res) => {
+    if (store.getThreads()[req.params.id] === undefined ||
+    req.body.text === undefined || 
+    req.body.messageCount === undefined || store.getThreads()[req.params.id]?.messages.length != req.body.messageCount) {
+        res.json({ok: false});
+        res.end();
+        return;
+    }
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();               // send headers right now
+    const t = store.getThreads()[req.params.id]!;
+    const c = new client("deepseek/deepseek-v4.1-flash-1017", "relace/fp4")
+    const a = new agent(c, t);
+    a.addUserMessage(req.body.text);
+    await a.run((e: event) => res.write("data: " + encodeEvent(e) + "\n\n"))
+    // await store.save();
+    // Will uncomment when we're done with testing!
+    res.end();
+});
+
+app.listen(3000, () => {
+    console.log("Server running on port 3000");
+});
