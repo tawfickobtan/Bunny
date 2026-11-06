@@ -1,5 +1,4 @@
-import type { assistantMessage, toolMessage } from "./agent/types/message.js";
-import type { tool_call } from "./agent/types/tool.js";
+import type { assistantMessage, toolMessage } from "./harness/types/message.js";
 
 export type event = toolResultEvent | messageEvent | errorEvent | doneEvent;
 
@@ -24,7 +23,7 @@ export type doneEvent = {
 }
 
 export function encodeEvent(event: event): string{
-    return "data: " + JSON.stringify(event) + "\n\n";
+    return JSON.stringify(event);
 }
 
 export function decodeEvent(eventString: string): event{
