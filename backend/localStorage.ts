@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import path from "path";
-import {type thread, makeThread} from "./agent/types/thread.js";
+import {type thread, makeThread} from "./harness/types/thread.js";
 import { randomUUID } from 'node:crypto';
 
 export class localStore{
@@ -37,9 +37,9 @@ export class localStore{
     getThreads(): Record<string, thread>{
         return this.threads;
     }
-    async create(systemPrompt: string, userMessage: string): Promise<thread>{
+    async create(cwd: string, systemPrompt: string): Promise<thread>{
         const current = randomUUID();
-        const newThread = makeThread(String(current), "", "", systemPrompt, userMessage);
+        const newThread = makeThread(String(current), "", cwd, systemPrompt);
         this.threads[String(current)] = newThread;
         await this.save();
         return newThread;
