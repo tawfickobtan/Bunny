@@ -1,6 +1,6 @@
 import client from './types/llm.js';
 import tool, {type tool_call, type toolSchema} from './types/tool.js';
-import thread from './types/thread.js';
+import {type thread} from './types/thread.js';
 import type {assistantMessage, message, toolMessage} from './types/message.js';
 import readFileLines from './tools/readFileLines.js';
 import listFiles from './tools/listFiles.js';

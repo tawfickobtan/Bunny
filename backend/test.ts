@@ -1,6 +1,6 @@
 import type {thread} from "./agent/types/thread.js";
 import client from "./agent/types/llm.js";
-import agent from "./agent/agent.js";
+import agent from "./agent/harness.js";
 import { localStore } from "./localStorage.js";
 import {type event} from "./event.js";
 
