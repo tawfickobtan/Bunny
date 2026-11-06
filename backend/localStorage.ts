@@ -31,7 +31,7 @@ export class localStore{
         console.log("Loaded threads.");
     }
     async save(): Promise<void>{
-        await fs.writeFile(this.threadsPath, JSON.stringify(this.threads), 'utf-8');
+        await fs.writeFile(this.threadsPath, JSON.stringify(this.threads, null, 2), 'utf-8');
         console.log("Saved threads.");
     }
     getThreads(): Record<string, thread>{
