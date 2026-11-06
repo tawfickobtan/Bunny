@@ -7,9 +7,9 @@ export type thread = {
     messages: message[];
 }
 
-export function makeThread(id: string, title: string, cwd: string, systemPrompt: string, userMessage: string): thread{
+export function makeThread(id: string, title: string, cwd: string, systemPrompt: string): thread{
     return {id,
             title,
             cwd,
-            messages:[{role: 'system',content:systemPrompt}, {role: 'user', content: userMessage}]}
+            messages:[{role: 'system',content:systemPrompt}]}
 }
