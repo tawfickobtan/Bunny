@@ -49,8 +49,7 @@ app.post("/threads/:id/messages", async (req, res) => {
     const a = new agent(c, t);
     a.addUserMessage(req.body.text);
     await a.run((e: event) => res.write("data: " + encodeEvent(e) + "\n\n"))
-    // await store.save();
-    // Will uncomment when we're done with testing!
+    await store.save(req.params.id);
     res.end();
 });
 
