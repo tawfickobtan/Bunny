@@ -5,7 +5,7 @@ import client from "./harness/types/llm.js";
 import { encodeEvent, type event } from "./event.js";
 
 const store = new localStore();
-await store.load();
+await store.init();
 
 const app = express();
 app.use(express.json());
@@ -19,11 +19,11 @@ app.get("/health", (req, res) =>{
 })
 
 app.get("/threads", (req, res) => {
-    res.json(store.getThreads());
+    res.json(store.getAllThreads());
 })
 
 app.get("/threads/:id", (req, res) => {
-    res.json(store.getThreads()[req.params.id] ?? {ok: false})
+    res.json(store.getAllThreads()[req.params.id] ?? {ok: false})
 });
 
 app.post("/threads", async (req, res) => {
@@ -33,9 +33,9 @@ app.post("/threads", async (req, res) => {
 })
 
 app.post("/threads/:id/messages", async (req, res) => {
-    if (store.getThreads()[req.params.id] === undefined ||
+    if (store.getAllThreads()[req.params.id] === undefined ||
     req.body.text === undefined || 
-    req.body.messageCount === undefined || store.getThreads()[req.params.id]?.messages.length != req.body.messageCount) {
+    req.body.messageCount === undefined || store.getAllThreads()[req.params.id]?.messages.length != req.body.messageCount) {
         res.json({ok: false});
         res.end();
         return;
@@ -44,7 +44,7 @@ app.post("/threads/:id/messages", async (req, res) => {
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders();               // send headers right now
-    const t = store.getThreads()[req.params.id]!;
+    const t = store.getAllThreads()[req.params.id]!;
     const c = new client("deepseek/deepseek-v4.1-flash-1017", "relace/fp4")
     const a = new agent(c, t);
     a.addUserMessage(req.body.text);
