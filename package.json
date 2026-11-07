@@ -7,7 +7,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "backend": "npx tsx backend/backend.ts"
+    "backend": "npx tsx backend/backend.ts",
+    "t": "npx tsx backend/test.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

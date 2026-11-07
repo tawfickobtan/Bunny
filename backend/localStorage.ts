@@ -2,46 +2,47 @@ import * as fs from "node:fs/promises";
 import path from "path";
 import {type thread, makeThread} from "./harness/types/thread.js";
 import { randomUUID } from 'node:crypto';
+import type skill from "./skill.js";
 
 export class localStore{
     bunny: string;
     threadsPath: string;
-    threads: Record<string, thread>;
+    threadCache: Record<string, thread>;
+    skillsPath: string;
+    skills: skill[];
 
     constructor(){
-        this.bunny = process.env.USERPROFILE!;
+        this.bunny = path.resolve(process.env.USERPROFILE!, ".bunny")
         console.log("Loading from " + this.bunny);
-        this.bunny = path.resolve(this.bunny, ".bunny")
-        this.threadsPath = path.resolve(this.bunny, "threads.json");
-        this.threads = {};
+        this.threadsPath = path.resolve(this.bunny, "threads");
+        this.skillsPath = path.resolve(this.bunny, "skills")
+        this.threadCache = {};
+        this.skills = [];
     }
 
-    async load(): Promise<void>{
-        await fs.mkdir(this.bunny, {recursive: true});
-        try{
-            await fs.access(this.threadsPath, fs.constants.F_OK | fs.constants.R_OK);
-            console.log("Thread File exists.");
+    async init(): Promise<void>{
+        await fs.mkdir(this.threadsPath, {recursive: true});
+        await fs.mkdir(this.skillsPath, {recursive: true});
+        console.log("Loading threads from: " + this.threadsPath);
+        const threadFiles = await fs.readdir(this.threadsPath);
+        for (const threadFile of threadFiles){
+            this.threadCache[threadFile] = JSON.parse(await fs.readFile(path.resolve(this.threadsPath, threadFile), 'utf-8')) as thread;
+            console.log("Loaded: " + threadFile);
         }
-        catch(e){
-            console.log("Thread file doesn't exist.")
-            await fs.writeFile(this.threadsPath, '{}', 'utf-8');
-            console.log("Thread file created.")
+    }
+    async save(threadId: string): Promise<void>{
+        if (Object.hasOwn(this.threadCache, threadId)){
+            await fs.writeFile(path.resolve(this.threadsPath, threadId), JSON.stringify(this.threadCache[threadId], null, 2), {encoding: 'utf-8'});
         }
-        this.threads = JSON.parse(await fs.readFile(this.threadsPath, { encoding: 'utf8' })) as Record<string, thread>;
-        console.log("Loaded threads.");
     }
-    async save(): Promise<void>{
-        await fs.writeFile(this.threadsPath, JSON.stringify(this.threads, null, 2), 'utf-8');
-        console.log("Saved threads.");
-    }
-    getThreads(): Record<string, thread>{
-        return this.threads;
+    getAllThreads(): Record<string, thread>{
+        return this.threadCache;
     }
     async create(cwd: string, systemPrompt: string): Promise<thread>{
         const current = randomUUID();
         const newThread = makeThread(String(current), "", cwd, systemPrompt);
-        this.threads[String(current)] = newThread;
-        await this.save();
+        this.threadCache[String(current)] = newThread;
+        await this.save(String(current));
         return newThread;
     }
 }
