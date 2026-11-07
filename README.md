@@ -12,8 +12,6 @@ Rule: change only one unfamiliar thing at a time, so when something breaks I kno
 - [ ] **Step 3: connect them.** Build the chat window (Electron + React) against my own server, once steps 1 and 2 feel okay.
 
 ## To Fix Before Frontend:
-- [ ] **API error language:** replace `200 {ok: false}` with proper HTTP status codes (400 bad input, 404 unknown thread, 409 stale `messageCount`) and one consistent error body shape.
-- [ ] **Run lifecycle:** add a turn limit per run (25), handle client disconnect mid-run (`req.on("close")`), and make sure a run can't go on forever.
 - [ ] **Tools overhaul:**
   - [ ] Unify the response format across all tools (one shape for success and failure, same structure everywhere).
   - [ ] Make tools execute from the correct directory (resolve paths against the thread's `cwd`, not the server's working directory; `runCommand` must use `cwd`).

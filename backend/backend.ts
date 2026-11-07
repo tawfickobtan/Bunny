@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 })
 
 app.get("/health", (req, res) =>{
-    res.json({ok: true})
+    res.json({ok: true});
 })
 
 app.get("/threads", (req, res) => {
@@ -23,11 +23,15 @@ app.get("/threads", (req, res) => {
 })
 
 app.get("/threads/:id", (req, res) => {
-    res.json(store.getAllThreads()[req.params.id] ?? {ok: false})
+    const t = store.getAllThreads()[req.params.id];
+    if (t === undefined) res.status(404).json({error: "Thread not found."})
+    else res.json(t);
 });
 
 app.post("/threads", async (req, res) => {
-    if (req.body.cwd === undefined) res.json({ok: false})
+    if (req.body.cwd === undefined) {
+            res.status(404).json({error: "No cwd in request body."})
+    }
     const t = await store.create(req.body.cwd, "You're a helpful assistant with web search!")
     res.json(t);
 })
@@ -36,8 +40,7 @@ app.post("/threads/:id/messages", async (req, res) => {
     if (store.getAllThreads()[req.params.id] === undefined ||
     req.body.text === undefined || 
     req.body.messageCount === undefined || store.getAllThreads()[req.params.id]?.messages.length != req.body.messageCount) {
-        res.json({ok: false});
-        res.end();
+        res.status(404).json({error: ""});
         return;
     }
     res.setHeader("Content-Type", "text/event-stream");
