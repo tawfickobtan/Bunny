@@ -18,5 +18,3 @@ Rule: change only one unfamiliar thing at a time, so when something breaks I kno
   - [ ] Tighten `isInsideCwd` (use `path.relative`, handle Windows case-insensitivity).
   - [ ] Keep `runCommand` out of the registry until the approval flow exists.
 - [ ] **Skill system:** skill manager + parser, then skill tools (`createSkill`, `editSkill`, `deleteSkill`, ...). Skills are data on disk; the agent loop stays fixed.
-- [ ] **Threads and operation areas:** each thread has a list of allowed directories / operation areas and the set of tools the agent can use (approval flow to extend it later).
-- [ ] **Minor:** `complete()` should check `response.ok`; thread list should return metadata only (not full messages); naming cleanup (`harness`, `agent`, `thread`); missing `return` after error reply in `POST /threads`.

@@ -11,6 +11,11 @@ export type toolSchema = {
 }
 }
 
+export type toolOutput = {
+    ok: boolean;
+    content: any
+};
+
 export type tool_call = {
     id: string;
     type: 'function';
@@ -23,9 +28,9 @@ export type tool_call = {
 
 export default class tool<T>{
     schema: toolSchema;
-    fn: (cwd: string, params: T) => Promise<string>;
+    fn: (cwd: string, params: T) => Promise<toolOutput>;
 
-    constructor(schema: toolSchema, fn: (cwd: string, params: T) => Promise<string>){
+    constructor(schema: toolSchema, fn: (cwd: string, params: T) => Promise<toolOutput>){
         this.schema = schema;
         this.fn = fn;
     }

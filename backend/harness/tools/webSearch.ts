@@ -1,16 +1,25 @@
 import {tavily} from "@tavily/core";
-import tool, {type toolSchema} from '../types/tool.js';
+import tool, {type toolOutput, type toolSchema} from '../types/tool.js';
 
 const client = tavily({ apiKey: process.env.TAVILY_API_KEY as string});
 
-export async function webSearchTool(cwd: string, {query, k}: {query: string; k?: number}): Promise<string>{
+export async function webSearchTool(cwd: string, {query, k}: {query: string; k?: number}): Promise<toolOutput>{
+    try{
     if (k === undefined) k = 5;
-    const response = await client.search(query, {
+    let {results} = await client.search(query, {
         searchDepth: "fast",
         maxResults: k,
         include_content: false
     });
-    return JSON.stringify(response, null, 2);
+    for (const result of results){
+        delete result.rawContent;
+        delete result.images;
+    }
+    return {ok: true, content: results};
+    }
+    catch (e) {
+        return {ok: false, content: 'Error searching web:' + ((e instanceof Error)? e.message: String(e))};
+      }
 }
 
 export const webSearchSchema: toolSchema= {
@@ -37,3 +46,5 @@ export const webSearchSchema: toolSchema= {
 
 const webSearch = new tool<{query: string; k?: number}>(webSearchSchema, webSearchTool);
 export default webSearch;
+
+console.log(JSON.stringify(await webSearchTool("", {query: "what is black scholes modelling in finance", k: 3}), null, 2))

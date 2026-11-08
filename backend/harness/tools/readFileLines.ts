@@ -1,12 +1,12 @@
 import * as fs from 'node:fs/promises';
-import tool, {type toolSchema} from '../types/tool.js';
+import tool, {type toolOutput, type toolSchema} from '../types/tool.js';
 import { isInsideCwd } from './common.js';
 import path from 'path';
 
-export async function readFileLinesTool(cwd: string, {filePath, startLine, endLine}: {filePath: string, startLine?: number, endLine?: number}):Promise<string>{
+export async function readFileLinesTool(cwd: string, {filePath, startLine, endLine}: {filePath: string, startLine?: number, endLine?: number}):Promise<toolOutput>{
     try {
         const resPath = path.resolve(filePath);
-        if (!isInsideCwd(cwd, resPath)) return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + cwd});
+        if (!isInsideCwd(cwd, resPath)) return {ok: false, content: "Path chosen is outside current working directory: " + cwd};
         if (startLine === undefined) startLine = 1;
         let data = await fs.readFile(resPath, { encoding: 'utf8' });
         data = data.replaceAll("\r\n", "\n");
@@ -17,15 +17,14 @@ export async function readFileLinesTool(cwd: string, {filePath, startLine, endLi
         const newArr = arr.slice(startLine - 1, endLine);
         const out = newArr.join("\n");
         const res = {
-            success: true,
             totalLines: arr.length,
             startLine: startLine,
             endLine: endLine,
             content: out
         }
-        return JSON.stringify(res, null, 2);
-      } catch (error) {
-        return JSON.stringify({success: false, message: 'Error reading file:' + error});
+        return {ok: true, content: res};
+      } catch (e) {
+        return {ok: false, content: 'Error reading file:' + ((e instanceof Error)? e.message: String(e))};
       }
 
 }

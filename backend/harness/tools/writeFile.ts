@@ -1,16 +1,16 @@
-import tool, {type toolSchema} from "../types/tool.js";
+import tool, {type toolOutput, type toolSchema} from "../types/tool.js";
 import * as fs from "node:fs/promises";
 import path from 'path';
 import { isInsideCwd } from "./common.js";
 
-export async function writeFileTool(cwd: string, {filePath, content}: {filePath: string, content: string}): Promise<string>{
+export async function writeFileTool(cwd: string, {filePath, content}: {filePath: string, content: string}): Promise<toolOutput>{
     try {
         const resPath = path.resolve(filePath);
-        if (!isInsideCwd(cwd, resPath)) return JSON.stringify({success: false, message: "Path chosen is outside current working directory: " + cwd});
+        if (!isInsideCwd(cwd, resPath)) return {ok: false, content: "Path chosen is outside current working directory: " + cwd};
         await fs.writeFile(resPath, content, 'utf8');
-        return JSON.stringify({success: true});
+        return {ok: true, content: "Write successful"};
       } catch (e) {
-        return JSON.stringify({success: false, message: 'Error writing file: ' + e});
+        return {ok: false, content: 'Error writing file:' + ((e instanceof Error)? e.message: String(e))};
       }
     
 }

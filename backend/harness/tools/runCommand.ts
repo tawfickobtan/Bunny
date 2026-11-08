@@ -1,18 +1,11 @@
 import {exec} from 'child_process';
 import {promisify} from 'util';
-import tool, {type toolSchema} from '../types/tool.js';
+import tool, {type toolOutput, type toolSchema} from '../types/tool.js';
 
 const asyncExec = promisify(exec);
 
-async function runCommandTool(cwd: string, {command} : {command: string}): Promise<string>{
-    try{
-    const { stdout, stderr } = await asyncExec(command);
-    if (stderr) return "Error occured:\n" + stderr;
-    return stdout;
-    }
-    catch(e){
-        return "Error occured:\n" + e;
-    }
+async function runCommandTool(cwd: string, {command} : {command: string}): Promise<toolOutput>{
+    return {ok: false, content: "Tool doesn't work yet :). Make sure to remind user to fix it."}
 }
 
 const runCommandSchema : toolSchema = {

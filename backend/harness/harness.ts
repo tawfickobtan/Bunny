@@ -11,7 +11,7 @@ import * as dotenv from 'dotenv';
 import type { event } from '../event.js';
 dotenv.config();
 
-export class agent {
+export default class harness {
     llm: client;
     thread: thread;
     tools: tool<any>[] = [readFileLines, listFiles, webSearch, fetchContent, writeFile];
@@ -81,4 +81,3 @@ export class agent {
     onEvent({type: "done"});
 }
 }
-export default agent;

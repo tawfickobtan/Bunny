@@ -1,6 +1,6 @@
 import express from "express";
 import { localStore } from "./localStorage.js";
-import agent from "./harness/harness.js";
+import harness from "./harness/harness.js";
 import client from "./harness/types/llm.js";
 import { encodeEvent, type event } from "./event.js";
 
@@ -49,7 +49,7 @@ app.post("/threads/:id/messages", async (req, res) => {
     res.flushHeaders();               // send headers right now
     const t = store.getAllThreads()[req.params.id]!;
     const c = new client("deepseek/deepseek-v4.1-flash-1017", "relace/fp4")
-    const a = new agent(c, t);
+    const a = new harness(c, t);
     a.addUserMessage(req.body.text);
     await a.run((e: event) => res.write("data: " + encodeEvent(e) + "\n\n"))
     await store.save(req.params.id);
