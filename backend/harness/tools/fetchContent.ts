@@ -35,5 +35,3 @@ const fetchContentSchema : toolSchema = {
 
 const fetchContent = new tool<{urls: string[]}>(fetchContentSchema, fetchContentTool);
 export default fetchContent;
-
-console.log(await fetchContentTool("", {urls:["example.com"]}))

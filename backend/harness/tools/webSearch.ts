@@ -46,5 +46,3 @@ export const webSearchSchema: toolSchema= {
 
 const webSearch = new tool<{query: string; k?: number}>(webSearchSchema, webSearchTool);
 export default webSearch;
-
-console.log(JSON.stringify(await webSearchTool("", {query: "what is black scholes modelling in finance", k: 3}), null, 2))
