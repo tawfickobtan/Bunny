@@ -41,4 +41,3 @@ export class client {
 }
 
 export default client;
-

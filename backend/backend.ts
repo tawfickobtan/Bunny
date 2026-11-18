@@ -29,18 +29,25 @@ app.get("/threads/:id", (req, res) => {
 });
 
 app.post("/threads", async (req, res) => {
+    try{
     if (req.body.cwd === undefined) {
             res.status(404).json({error: "No cwd in request body."})
+            return;
     }
     const t = await store.create(req.body.cwd, "You're a helpful assistant with web search!")
     res.json(t);
+    console.log(t);
+}
+    catch{
+        res.status(404).json({error: "Unable to create thread."})
+    }
 })
 
 app.post("/threads/:id/messages", async (req, res) => {
     if (store.getAllThreads()[req.params.id] === undefined ||
     req.body.text === undefined || 
     req.body.messageCount === undefined || store.getAllThreads()[req.params.id]?.messages.length != req.body.messageCount) {
-        res.status(404).json({error: ""});
+        res.status(404).json({error: "Error adding message to thread (maybe something's missing)."});
         return;
     }
     res.setHeader("Content-Type", "text/event-stream");
@@ -48,13 +55,15 @@ app.post("/threads/:id/messages", async (req, res) => {
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders();               // send headers right now
     const t = store.getAllThreads()[req.params.id]!;
-    const c = new client("deepseek/deepseek-v4.1-flash-1017", "relace/fp4")
+    const c = new client("meta/muse-ember", "google-vertex/global")
     const a = new harness(c, t);
     a.addUserMessage(req.body.text);
     await a.run((e: event) => res.write("data: " + encodeEvent(e) + "\n\n"))
     await store.save(req.params.id);
     res.end();
 });
+
+app.post("/toy", (req, res) => res.json(req.body))
 
 app.listen(3000, () => {
     console.log("Server running on port 3000");
